@@ -421,13 +421,21 @@ async function getRace(id) {
 	return resData;
 }
 
-function startRace(id) {
-	return fetch(`${SERVER}/api/races/${id}/start`, {
-		method: 'POST',
-		...defaultFetchOpts(),
-	})
-	.then(res => res.json())
-	.catch(err => console.log("Problem with getRace request::", err))
+async function startRace(id) {
+	try {
+		const raceId = parseInt(id) - 1; 
+		const res = await fetch(`${SERVER}/api/races/${raceId}/start`, {
+									...defaultFetchOpts(),
+									method: 'POST',
+									mode: 'cors',
+									dataType: 'jsonp'
+								})
+		const resData = await res.json()
+
+		return resData;
+	} catch(err){
+		console.log("Problem with getRace request::", err)
+	}
 }
 
 function accelerate(id) {
