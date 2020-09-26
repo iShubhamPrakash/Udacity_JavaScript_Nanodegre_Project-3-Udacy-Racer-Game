@@ -2,8 +2,8 @@
 
 // The store will hold all information needed globally
 var store = {
-	track_id: undefined,
-	player_id: undefined,
+	track: undefined,
+	player: undefined,
 	race_id: undefined,
 }
 
@@ -75,18 +75,18 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// render starting UI
-	// TODO - Get player_id and track_id from the store
-	const player_id = store.player_id;
-	const track_id = store.track_id;
+	// TODO - Get player and track from the store
+	const player = store.player;
+	const track = store.track;
 
-	// Validate if both player_id and track_id is defined
-	if(!player_id || !track_id){
+	// Validate if both player and track is not undefined
+	if(!player || !track){
 		alert("Please select both the racer and the track before starting the game!!");
 		return 
 	}
 	
 	// const race = TODO - invoke the API call to create the race, then save the result
-	const race = await createRace(player_id, track_id);
+	const race = await createRace(player.id, track.id);
 
 	// TODO - update the store with the race id
 	store.race_id = race.ID;
@@ -125,9 +125,10 @@ async function runRace(raceID) {
 			reslove(res) // resolve the promise
 		*/
 		clearInterval(intervalID)
+		renderAt('#race', resultsView(res.positions))
 		resolve(res)
 
-		}else{
+		}else if(res.status === 'in-progress'){
 		/* 
 			TODO - if the race info status property is "in-progress", update the leaderboard by calling:
 
@@ -180,7 +181,7 @@ function handleSelectPodRacer(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected racer to the store
-	store.player_id = target
+	store.player = target
 }
 
 function handleSelectTrack(target) {
@@ -196,7 +197,7 @@ function handleSelectTrack(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected track id to the store
-	store.track_id = target
+	store.track = target
 }
 
 function handleAccelerate() {
@@ -305,7 +306,7 @@ function resultsView(positions) {
 }
 
 function raceProgress(positions) {
-	let userPlayer = positions.find(e => e.id === store.player_id)
+	let userPlayer = positions.find(e => e.id === store.player.id)
 	userPlayer.driver_name += " (you)"
 
 	positions = positions.sort((a, b) => (a.segment > b.segment) ? -1 : 1)
@@ -409,7 +410,8 @@ function createRace(player_id, track_id) {
 
 
 async function getRace(id) {
-	// GET request to `${SERVER}/api/races/${id}`
+	try{
+		// GET request to `${SERVER}/api/races/${id}`
 	const raceId = parseInt(id) - 1;
 	const res = await fetch(`${SERVER}/api/races/${raceId}`, {
 							...defaultFetchOpts(),
@@ -419,6 +421,9 @@ async function getRace(id) {
 	const resData = await res.json();
 
 	return resData;
+	}catch(err){
+		console.log("Problem with getRace request::", err)
+	}
 }
 
 async function startRace(id) {
@@ -430,11 +435,9 @@ async function startRace(id) {
 									mode: 'cors',
 									dataType: 'jsonp'
 								})
-		const resData = await res.json()
-
-		return resData;
+		return res;
 	} catch(err){
-		console.log("Problem with getRace request::", err)
+		console.log("Problem with startRace request::", err)
 	}
 }
 
