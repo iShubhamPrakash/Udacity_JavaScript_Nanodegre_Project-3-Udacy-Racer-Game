@@ -2,9 +2,9 @@
 
 // The store will hold all information needed globally
 var store = {
+	race_id: undefined,
 	track: undefined,
 	player: undefined,
-	race_id: undefined,
 };
 
 // We need our javascript to wait until the DOM is loaded
@@ -90,7 +90,7 @@ async function handleCreateRace() {
 
 	// const race = TODO - invoke the API call to create the race, then save the result
 	const race = await createRace(player.id, track.id);
-	console.log("handleCreateRace -> race", race);
+	// console.log("handleCreateRace -> race", race);
 	// TODO - update the store with the race id
 	store.race_id = race.ID;
 
@@ -105,7 +105,7 @@ async function handleCreateRace() {
 
 	// TODO - call the async function runRace
 	const raceRun = await runRace(store.race_id);
-	console.log("handleCreateRace -> raceRun", raceRun);
+	// console.log("handleCreateRace -> raceRun", raceRun);
 	renderAt("#race", resultsView(raceRun.positions));
 }
 
@@ -118,7 +118,7 @@ async function runRace(raceID) {
 
 		const intervalID = setInterval(async () => {
 			const res = await getRace(raceID);
-			console.log("runRace -> res=", res);
+			// console.log("runRace -> res=", res);
 
 			if (res.status !== "finished") {
 				/* 
@@ -201,7 +201,7 @@ function handleSelectTrack(target) {
 function handleAccelerate() {
 	console.log("accelerate button clicked");
 	// TODO - Invoke the API call to accelerate
-	accelerate(store.race_id).then(() => console.log("Car accelerated"));
+	accelerate(store.race_id).then(() => console.log("Car acceleration sucess"));
 }
 
 // HTML VIEWS ------------------------------------------------
@@ -427,7 +427,7 @@ async function startRace(id) {
 			mode: "cors",
 			dataType: "jsonp",
 		});
-		console.log("startRace-> res =", res);
+		// console.log("startRace-> res =", res);
 		return res;
 	} catch (err) {
 		console.log("Problem with startRace request::", err);
