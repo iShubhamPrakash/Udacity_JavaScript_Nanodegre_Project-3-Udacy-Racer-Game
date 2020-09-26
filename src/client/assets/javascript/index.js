@@ -107,22 +107,38 @@ async function handleCreateRace() {
 }
 
 function runRace(raceID) {
+	const _delayTime = 1000;
+	await delay(_delayTime);
+
 	return new Promise(resolve => {
 	// TODO - use Javascript's built in setInterval method to get race info every 500ms
 
-	/* 
-		TODO - if the race info status property is "in-progress", update the leaderboard by calling:
+	const intervalID = setInterval(async () => {
+		const res = await getRace(raceID);
 
-		renderAt('#leaderBoard', raceProgress(res.positions))
-	*/
+		if(res.status === 'finished'){
+		/* 
+			TODO - if the race info status property is "finished", run the following:
 
-	/* 
-		TODO - if the race info status property is "finished", run the following:
+			clearInterval(raceInterval) // to stop the interval from repeating
+			renderAt('#race', resultsView(res.positions)) // to render the results view
+			reslove(res) // resolve the promise
+		*/
+		clearInterval(intervalID)
+		resolve(res)
 
-		clearInterval(raceInterval) // to stop the interval from repeating
-		renderAt('#race', resultsView(res.positions)) // to render the results view
-		reslove(res) // resolve the promise
-	*/
+		}else{
+		/* 
+			TODO - if the race info status property is "in-progress", update the leaderboard by calling:
+
+			renderAt('#leaderBoard', raceProgress(res.positions))
+		*/
+			renderAt('#leaderBoard', raceProgress(res.positions))
+		}
+
+	}, 500);
+
+
 	})
 	// remember to add error handling for the Promise
 }
