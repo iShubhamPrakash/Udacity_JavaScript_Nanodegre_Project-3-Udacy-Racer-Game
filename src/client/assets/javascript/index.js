@@ -180,7 +180,7 @@ function handleSelectPodRacer(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected racer to the store
-	store.player = target
+	store.player_id = target
 }
 
 function handleSelectTrack(target) {
@@ -196,7 +196,7 @@ function handleSelectTrack(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected track id to the store
-	
+	store.track_id = target
 }
 
 function handleAccelerate() {
