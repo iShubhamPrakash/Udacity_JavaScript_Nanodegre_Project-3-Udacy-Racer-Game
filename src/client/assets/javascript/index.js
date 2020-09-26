@@ -106,7 +106,7 @@ async function handleCreateRace() {
 	renderAt('#race', resultsView(raceRun.positions))
 }
 
-function runRace(raceID) {
+async function runRace(raceID) {
 	const _delayTime = 1000;
 	await delay(_delayTime);
 
@@ -359,7 +359,7 @@ function defaultFetchOpts() {
 async function getTracks() {
 	// GET request to `${SERVER}/api/tracks`
 	try{
-		
+
 		const res= await fetch(`${SERVER}/api/tracks`, {
 			...defaultFetchOpts(),
 			method: 'GET',
@@ -374,8 +374,22 @@ async function getTracks() {
 	}
 }
 
-function getRacers() {
+async function getRacers() {
 	// GET request to `${SERVER}/api/cars`
+	try{
+
+		const res= await fetch(`${SERVER}/api/cars`, {
+			...defaultFetchOpts(),
+			method: 'GET',
+			dataType: 'jsonp'
+		})
+
+		const resData = await res.json()
+		return resData;
+
+	}catch(e){
+		console.log("Error occurred in getTracks: ", e)
+	}
 }
 
 function createRace(player_id, track_id) {
