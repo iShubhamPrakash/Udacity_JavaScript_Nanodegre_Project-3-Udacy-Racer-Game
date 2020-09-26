@@ -407,8 +407,18 @@ function createRace(player_id, track_id) {
 	.catch(err => console.log("Problem with createRace request::", err))
 }
 
-function getRace(id) {
+
+async function getRace(id) {
 	// GET request to `${SERVER}/api/races/${id}`
+	const raceId = parseInt(id) - 1;
+	const res = await fetch(`${SERVER}/api/races/${raceId}`, {
+							...defaultFetchOpts(),
+							method: 'GET',
+							dataType: 'jsonp'
+						})
+	const resData = await res.json();
+
+	return resData;
 }
 
 function startRace(id) {
