@@ -356,8 +356,22 @@ function defaultFetchOpts() {
 
 // TODO - Make a fetch call (with error handling!) to each of the following API endpoints 
 
-function getTracks() {
+async function getTracks() {
 	// GET request to `${SERVER}/api/tracks`
+	try{
+		
+		const res= await fetch(`${SERVER}/api/tracks`, {
+			...defaultFetchOpts(),
+			method: 'GET',
+			dataType: 'jsonp'
+		})
+
+		const resData = await res.json()
+		return resData;
+
+	}catch(e){
+		console.log("Error occurred in getTracks: ", e)
+	}
 }
 
 function getRacers() {
