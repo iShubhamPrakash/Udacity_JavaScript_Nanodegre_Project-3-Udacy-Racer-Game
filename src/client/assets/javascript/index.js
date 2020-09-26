@@ -180,6 +180,7 @@ function handleSelectPodRacer(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected racer to the store
+	store.player = target
 }
 
 function handleSelectTrack(target) {
