@@ -87,7 +87,7 @@ async function handleCreateRace() {
 	
 	// const race = TODO - invoke the API call to create the race, then save the result
 	const race = await createRace(player.id, track.id);
-
+	console.log("handleCreateRace -> race", race);
 	// TODO - update the store with the race id
 	store.race_id = race.ID;
 
@@ -102,7 +102,7 @@ async function handleCreateRace() {
 
 	// TODO - call the async function runRace
 	const raceRun = await runRace(store.race_id)
-
+	console.log("handleCreateRace -> raceRun", raceRun);
 	renderAt('#race', resultsView(raceRun.positions))
 }
 
@@ -115,8 +115,9 @@ async function runRace(raceID) {
 
 	const intervalID = setInterval(async () => {
 		const res = await getRace(raceID);
-
-		if(res.status === 'finished'){
+		console.log("runRace -> res=", res);
+		
+		if (res.status !== 'finished') {
 		/* 
 			TODO - if the race info status property is "finished", run the following:
 
@@ -124,17 +125,15 @@ async function runRace(raceID) {
 			renderAt('#race', resultsView(res.positions)) // to render the results view
 			reslove(res) // resolve the promise
 		*/
-		clearInterval(intervalID)
-		renderAt('#race', resultsView(res.positions))
-		resolve(res)
-
-		}else if(res.status === 'in-progress'){
+			renderAt('#leaderBoard', raceProgress(res.positions))
+		} else {
 		/* 
 			TODO - if the race info status property is "in-progress", update the leaderboard by calling:
 
 			renderAt('#leaderBoard', raceProgress(res.positions))
 		*/
-			renderAt('#leaderBoard', raceProgress(res.positions))
+			clearInterval(intervalID)
+			resolve(res)
 		}
 
 	}, 500);
@@ -306,7 +305,7 @@ function resultsView(positions) {
 }
 
 function raceProgress(positions) {
-	let userPlayer = positions.find(e => e.id === store.player.id)
+	let userPlayer = positions.find(e => e.id === parseInt(store.player.id))
 	userPlayer.driver_name += " (you)"
 
 	positions = positions.sort((a, b) => (a.segment > b.segment) ? -1 : 1)
@@ -435,6 +434,7 @@ async function startRace(id) {
 									mode: 'cors',
 									dataType: 'jsonp'
 								})
+		console.log("startRace-> res =", res)
 		return res;
 	} catch(err){
 		console.log("Problem with startRace request::", err)
