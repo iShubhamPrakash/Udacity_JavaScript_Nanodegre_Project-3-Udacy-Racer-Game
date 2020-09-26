@@ -438,8 +438,13 @@ async function startRace(id) {
 	}
 }
 
-function accelerate(id) {
+async function accelerate(id) {
 	// POST request to `${SERVER}/api/races/${id}/accelerate`
 	// options parameter provided as defaultFetchOpts
 	// no body or datatype needed for this request
+	const raceId = parseInt(id) - 1
+	await fetch(`${SERVER}/api/races/${raceId}/accelerate`, {
+		...defaultFetchOpts(),
+		method: 'POST'
+	})
 }
