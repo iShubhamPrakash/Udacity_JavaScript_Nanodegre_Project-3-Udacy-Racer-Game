@@ -75,20 +75,35 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// render starting UI
-	renderAt('#race', renderRaceStartView())
-
 	// TODO - Get player_id and track_id from the store
+	const player_id = store.player_id;
+	const track_id = store.track_id;
+
+	// Validate if both player_id and track_id is defined
+	if(!player_id || !track_id){
+		alert("Please select both the racer and the track before starting the game!!");
+		return 
+	}
 	
 	// const race = TODO - invoke the API call to create the race, then save the result
+	const race = await createRace(player_id, track_id);
 
 	// TODO - update the store with the race id
+	store.race_id = race.ID;
 
 	// The race has been created, now start the countdown
+	renderAt('#race', renderRaceStartView(race.Track))
+
 	// TODO - call the async function runCountdown
+	await runCountdown();
 
 	// TODO - call the async function startRace
+	await startRace(store.race_id)
 
 	// TODO - call the async function runRace
+	const raceRun = await runRace(store.race_id)
+
+	renderAt('#race', resultsView(raceRun.positions))
 }
 
 function runRace(raceID) {
