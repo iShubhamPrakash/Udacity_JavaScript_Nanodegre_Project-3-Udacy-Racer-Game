@@ -219,7 +219,7 @@ function renderRacerCars(racers) {
 
 	return `
 		<ul id="racers">
-			${reuslts}
+			${results}
 		</ul>
 	`
 }
@@ -388,7 +388,7 @@ async function getRacers() {
 		return resData;
 
 	}catch(e){
-		console.log("Error occurred in getTracks: ", e)
+		console.log("Error occurred in getRacers: ", e)
 	}
 }
 
