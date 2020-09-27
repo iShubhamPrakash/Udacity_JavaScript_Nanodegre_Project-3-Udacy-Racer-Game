@@ -1,7 +1,7 @@
 // PROVIDED CODE BELOW (LINES 1 - 80) DO NOT REMOVE
 
 // The store will hold all information needed globally
-var store = {
+let store = {
 	race_id: undefined,
 	track: undefined,
 	player: undefined,
@@ -88,25 +88,29 @@ async function handleCreateRace() {
 		return;
 	}
 
-	// const race = TODO - invoke the API call to create the race, then save the result
-	const race = await createRace(player.id, track.id);
-	// console.log("handleCreateRace -> race", race);
-	// TODO - update the store with the race id
-	store.race_id = race.ID;
+	try{
+		// const race = TODO - invoke the API call to create the race, then save the result
+		const race = await createRace(player.id, track.id);
+		// console.log("handleCreateRace -> race", race);
+		// TODO - update the store with the race id
+		store.race_id = race.ID;
 
-	// The race has been created, now start the countdown
-	renderAt("#race", renderRaceStartView(race.Track));
+		// The race has been created, now start the countdown
+		renderAt("#race", renderRaceStartView(race.Track));
 
-	// TODO - call the async function runCountdown
-	await runCountdown();
+		// TODO - call the async function runCountdown
+		await runCountdown();
 
-	// TODO - call the async function startRace
-	await startRace(store.race_id);
+		// TODO - call the async function startRace
+		await startRace(store.race_id);
 
-	// TODO - call the async function runRace
-	const raceRun = await runRace(store.race_id);
-	// console.log("handleCreateRace -> raceRun", raceRun);
-	renderAt("#race", resultsView(raceRun.positions));
+		// TODO - call the async function runRace
+		const raceRun = await runRace(store.race_id);
+		// console.log("handleCreateRace -> raceRun", raceRun);
+		renderAt("#race", resultsView(raceRun.positions));
+	}catch(err){
+		console.log("Error in handleCreateRace: ", err)
+	}
 }
 
 async function runRace(raceID) {
@@ -139,7 +143,7 @@ async function runRace(raceID) {
 				resolve(res);
 			}
 		}, 500);
-	});
+	}).catch(e=>console.log(e));
 }
 
 async function runCountdown() {
@@ -201,7 +205,9 @@ function handleSelectTrack(target) {
 function handleAccelerate() {
 	console.log("accelerate button clicked");
 	// TODO - Invoke the API call to accelerate
-	accelerate(store.race_id).then(() => console.log("Car acceleration sucess"));
+	accelerate(store.race_id)
+	.then(() => console.log("Car acceleration sucess"))
+	.catch((e)=> console.log(e));
 }
 
 // HTML VIEWS ------------------------------------------------
@@ -363,8 +369,7 @@ async function getTracks() {
 			dataType: "jsonp",
 		});
 
-		const resData = await res.json();
-		return resData;
+		return await res.json();
 	} catch (e) {
 		console.log("Error occurred in getTracks: ", e);
 	}
@@ -379,8 +384,7 @@ async function getRacers() {
 			dataType: "jsonp",
 		});
 
-		const resData = await res.json();
-		return resData;
+		return await res.json();
 	} catch (e) {
 		console.log("Error occurred in getRacers: ", e);
 	}
@@ -410,9 +414,8 @@ async function getRace(id) {
 			method: "GET",
 			dataType: "jsonp",
 		});
-		const resData = await res.json();
 
-		return resData;
+		return await res.json();
 	} catch (err) {
 		console.log("Problem with getRace request::", err);
 	}
@@ -442,5 +445,5 @@ async function accelerate(id) {
 	await fetch(`${SERVER}/api/races/${raceId}/accelerate`, {
 		...defaultFetchOpts(),
 		method: "POST",
-	});
+	}).catch(e=>console.log(e));
 }
